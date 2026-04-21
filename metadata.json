@@ -1,0 +1,5 @@
+{
+  "name": "LOOMRA",
+  "description": "Minimal streetwear essentials crafted for everyday comfort. Proudly Made in Pakistan.",
+  "requestFramePermissions": ["camera"]
+}

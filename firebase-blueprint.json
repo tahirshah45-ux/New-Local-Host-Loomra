@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A product available in the Loomra Atelier store.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the product" },
+        "description": { "type": "string", "description": "Detailed description" },
+        "price": { "type": "number", "description": "Price of the product" },
+        "category": { "type": "string", "description": "Product category (e.g., CAPS, TEES)" },
+        "img": { "type": "string", "description": "Main product image URL" },
+        "images": { "type": "array", "items": { "type": "string" }, "description": "Additional product images" },
+        "video_url": { "type": "string", "description": "Product video URL" },
+        "colors": { "type": "array", "items": { "type": "object" }, "description": "Available colors and their images" },
+        "seo": { "type": "object", "description": "SEO metadata" },
+        "seo_score": { "type": "integer", "description": "SEO health score" },
+        "stock": { "type": "integer", "description": "Total stock count" },
+        "size_stock": { "type": "object", "description": "Stock count per size" },
+        "sku": { "type": "string", "description": "Unique SKU" },
+        "status": { "type": "string", "enum": ["Active", "Draft", "Archived"], "description": "Product status" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Product tags" },
+        "is_active": { "type": "boolean", "description": "Whether the product is active" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["name", "price", "category", "img"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique order ID" },
+        "customerName": { "type": "string", "description": "Customer's full name" },
+        "phone": { "type": "string", "description": "Customer's phone number" },
+        "address": { "type": "string", "description": "Shipping address" },
+        "city": { "type": "string", "description": "Shipping city" },
+        "products": { "type": "array", "items": { "type": "object" }, "description": "Ordered items" },
+        "totalAmount": { "type": "number", "description": "Total order amount" },
+        "status": { "type": "string", "description": "Order status (e.g., Pending, Shipped)" },
+        "fulfillmentStatus": { "type": "string", "description": "Fulfillment status" },
+        "timeline": { "type": "array", "items": { "type": "object" }, "description": "Order history timeline" },
+        "paymentMethod": { "type": "string", "description": "Payment method" },
+        "date": { "type": "string", "format": "date-time", "description": "Order date" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "customerName", "phone", "address", "city", "products", "totalAmount"]
+    },
+    "SystemConfig": {
+      "title": "SystemConfig",
+      "description": "System-wide configuration settings and API keys.",
+      "type": "object",
+      "properties": {
+        "key_name": { "type": "string", "description": "Unique key name" },
+        "value": { "type": "string", "description": "Configuration value" },
+        "description": { "type": "string", "description": "Description of the config" },
+        "updated_at": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["key_name", "value"]
+    },
+    "MarketingHero": {
+      "title": "MarketingHero",
+      "description": "Hero section images for marketing.",
+      "type": "object",
+      "properties": {
+        "image_url": { "type": "string", "description": "Image URL" },
+        "is_active": { "type": "boolean", "description": "Whether the image is active" },
+        "display_order": { "type": "integer", "description": "Order in which to display" },
+        "created_at": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["image_url"]
+    }
+  },
+  "firestore": {
+    "products": { "schema": { "$ref": "Product" }, "description": "Collection of products" },
+    "orders": { "schema": { "$ref": "Order" }, "description": "Collection of orders" },
+    "system_configs": { "schema": { "$ref": "SystemConfig" }, "description": "Collection of system configurations" },
+    "marketing_hero": { "schema": { "$ref": "MarketingHero" }, "description": "Collection of marketing hero images" }
+  }
+}

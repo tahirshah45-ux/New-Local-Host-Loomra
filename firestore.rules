@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: products
+    // Document ID: auto-generated
+    // Fields: name, description, price, category, img, images, video_url, colors, seo, seo_score, stock, size_stock, sku, status, tags, is_active, created_at
+    //
+    // Collection: orders
+    // Document ID: auto-generated
+    // Fields: order_id, customer_name, phone, address, city, items, total_amount, status, fulfillment_status, timeline, payment_method, date, created_at
+    //
+    // Collection: system_configs
+    // Document ID: auto-generated
+    // Fields: key_name, value, description, updated_at
+    //
+    // Collection: marketing_hero
+    // Document ID: auto-generated
+    // Fields: image_url, is_active, display_order, created_at
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "tahirshah45@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidProduct(data) {
+      return hasRequiredFields(['name', 'price', 'category', 'img']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 200 &&
+             data.price is number && data.price >= 0 &&
+             data.category is string &&
+             data.img is string;
+    }
+
+    function isValidOrder(data) {
+      return hasRequiredFields(['id', 'customerName', 'phone', 'address', 'city', 'products', 'totalAmount']) &&
+             data.id is string &&
+             data.customerName is string && data.customerName.size() > 0 && data.customerName.size() < 100 &&
+             data.phone is string &&
+             data.totalAmount is number && data.totalAmount >= 0;
+    }
+
+    function isValidConfig(data) {
+      return hasRequiredFields(['key_name', 'value']) &&
+             data.key_name is string &&
+             data.value is string;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /products/{productId} {
+      allow read, write: if true;
+    }
+
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    match /system_configs/{configId} {
+      allow read, write: if true;
+    }
+
+    match /support_config/{configId} {
+      allow read, write: if true;
+    }
+
+    match /marketing_hero/{heroId} {
+      allow read, write: if true;
+    }
+
+    match /messages/{messageId} {
+      allow read, write: if true;
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}
